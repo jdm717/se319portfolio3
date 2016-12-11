@@ -38,7 +38,9 @@
 			var username = $('#username').val();
 			var password = $('#password').val();
 
-			
+			// PHP call to validate user
+
+			sessionStorage.setItem('username', username);
 		}
 
 		function register() {
