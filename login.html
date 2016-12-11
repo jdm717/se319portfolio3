@@ -37,10 +37,32 @@
 		function login() {
 			var username = $('#username').val();
 			var password = $('#password').val();
-
-			// PHP call to validate user
-
-			sessionStorage.setItem('username', username);
+			$.ajax({
+				url: '/se319portfolio3/checklogin.php',
+				type: 'GET',		
+				dataType: 'json',
+				contentType: 'application/json',
+				data: {
+					username: username,
+					pw: password
+				},
+				success: function(data) {
+					var parsedResponse = JSON.parse(data);
+					if(data == 1) {
+						//window.location = "/library.html";
+						alert("worked");
+					}
+					else {
+						alert("Invalid username or password. Please try again.");
+					}
+					console.log(parsedResponse);
+				},
+				error: function(error) {
+					console.log(error);
+					alert("Failed");
+				}
+			});
+			
 		}
 
 		function register() {
