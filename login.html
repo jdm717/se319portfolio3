@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<title>Login</title>
+
+		<!-- Jquery -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+
+		<!-- Bootstrap stylesheet/javascript for page design -->
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+		<style type="text/css">
+			html , body {
+				background: #cccc00; 
+				margin: 0; 
+				padding: 0;
+			}
+			.modal {
+				padding-top: 50px;
+			}
+			.modal-footer {
+				background-color: #ff3333 !important;
+			}
+			.modal-header {
+				background-color: #ff3333 !important;
+			}
+		</style>
+
+		<script>
+
+		$(document).ready(function() {
+			$('#login-modal').show();
+		});
+
+		function login() {
+			var username = $('#username').val();
+			var password = $('#password').val();
+
+			
+		}
+
+		function register() {
+			window.location.pathname = "./register.html";
+		}
+
+		</script>
+	</head>
+	<body>
+		<div id="login-modal" class="modal" tabindex="-1" role="dialog">
+		  <div class="modal-dialog" role="document">
+		    <div class="modal-content">
+		      <div class="modal-header" style="background-color: #f2f2f2">
+		        <h4 class="modal-title">Login</h4>
+		      </div>
+		      <div class="modal-body">
+		        <div class="form-group">
+				  <label for="username">Username:</label>
+				  <input type="text" class="form-control" id="username">
+				</div>
+				<div class="form-group">
+				  <label for="password">Password:</label>
+				  <input type="password" class="form-control" id="password">
+				</div>
+		      </div>
+		      <div class="modal-footer" style="background-color: #f2f2f2">
+		      	<button type="button" class="btn btn-default" onclick="register()" style="float: left">Register</button>
+		        <button type="button" class="btn btn-default" onclick="login()">Login</button>
+		      </div>
+		    </div><!-- /.modal-content -->
+		  </div><!-- /.modal-dialog -->
+		</div><!-- /.modal -->
+	</body>
+</html>
