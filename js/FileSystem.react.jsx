@@ -7,6 +7,7 @@ var Glyphicon = ReactBootstrap.Glyphicon;
 var Row = ReactBootstrap.Row;
 
 function setup_filesystem(items) {
+	debugger;
 	ReactDOM.render(<FileSystem data={items}/>, document.getElementById("content"));
 }
 
@@ -18,7 +19,12 @@ var FileSystem = React.createClass({
 		var items = [];
 
 		for(var key in this.props.data) {
-			items.push(<FileNode item={this.props.data[key]} key={key}/>);
+			items.push(<FileNode 
+							item={this.props.data[key]} 
+							onSelectedChange={this._handleSelectedChange}
+							key={key}
+						/>
+					);
 		}
 
 		return (
@@ -26,12 +32,16 @@ var FileSystem = React.createClass({
 				{items}
 			</div>
 		);
+	},
+	_handleSelectedChange: function(e) {
+		this.forceUpdate();
 	}
 });
 
 var FileNode = React.createClass({
 	propTypes: {
-		item: React.PropTypes.object.isRequired
+		item: React.PropTypes.object.isRequired,
+		onSelectedChange: React.PropTypes.func.isRequired
 	},
 	getInitialState: function() {
 		return {
@@ -44,11 +54,15 @@ var FileNode = React.createClass({
 		if(this.state.hovered) {
 			className = "hovered";
 		}
+		if(this.props.item == selected) {
+			className += " active";
+		}
 
 		return (
 			<Row
 				onMouseEnter={this._handleItemHover}
 				onMouseLeave={this._handleItemHover}
+				onClick={this._handleItemClick}
 				className={className}
 			>
 				<Glyphicon glyph="folder-close"/>
@@ -60,6 +74,13 @@ var FileNode = React.createClass({
 		this.setState({
 			hovered: !this.state.hovered
 		});
+	},
+	_handleItemClick: function(e) {
+		selected = this.props.item;
+
+		this.forceUpdate();
+
+		this.props.onSelectedChange(e);
 	}
 });
 

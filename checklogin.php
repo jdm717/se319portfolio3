@@ -20,11 +20,12 @@ $query = "SELECT * FROM students WHERE sName = '$user' and sPassword = '$pw'";
 
 
 $result = mysqli_query($conn, $query);
-$something = mysqli_fetch_array( $result );
+$row = mysqli_fetch_row($result);
 
 mysqli_close($conn);
 
-echo($result);
+print_r($row);
+echo($row[0] . $row[1] . $row[2]);
 //echo($something);
 
 

@@ -18,6 +18,13 @@
     <script src="https://unpkg.com/react@15/dist/react.js"></script>
     <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
 
+    <!-- Immutable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/immutable/3.8.1/immutable.js"></script>
+
+    <!-- Draft.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/draft-js/0.9.1/Draft.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/draft-js/0.9.1/Draft.css">
+
     <!-- React Bootstrap -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/react-bootstrap/0.30.7/react-bootstrap.js"></script>
 
@@ -55,6 +62,14 @@
       .hovered {
         background-color: #b3d9ff
       }
+
+      .active {
+        background-color: #66b3ff
+      }
+
+      .active.hovered {
+        background-color: #4da6ff
+      }
     </style>
 
     <script src="./js/AppHeader.react.jsx" type="text/jsx"></script>
@@ -70,10 +85,18 @@
       }
     ];
 
+    var selected = {};
+
     window.onload = function() {
       var username = sessionStorage.username;
 
       // PHP call to retreive user's home folder
+    }
+
+
+    function clearSelection() {
+      selected = {};
+      update();
     }
 
     </script>
@@ -82,12 +105,16 @@
     <script type="text/jsx">
       setup_appheader();
       setup_filesystem(items);
+
+      function update() {
+        setup_filesystem(items);
+      }
     </script>
 
-    <div class="container" id="header">
+    <div class="container" onclick="clearSelection()" id="header">
       
     </div>
-    <div class="container" id="content">
+    <div class="container" onclick="clearSelection()" id="content">
 
     </div>
 

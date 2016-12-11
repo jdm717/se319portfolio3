@@ -6,6 +6,8 @@ var FormControl = ReactBootstrap.FormControl;
 var Glyphicon = ReactBootstrap.Glyphicon;
 
 function setup_appheader() {
+	var test = Draft;
+
 	ReactDOM.render(<AppHeader />, document.getElementById("header"));
 }
 
@@ -30,7 +32,7 @@ var AppHeader = React.createClass({
 					<Button><Glyphicon glyph="download"/></Button>
 					<Button><Glyphicon glyph="upload"/></Button>
 					<Button><Glyphicon glyph="plus"/></Button>
-					<Button><Glyphicon glyph="text-color"/></Button>
+					<Button onClick={this._newTextDocument}><Glyphicon glyph="text-color"/></Button>
 				</ButtonGroup>
 				<FormGroup style={{display: "inline", float: "right"}}>
 			      <InputGroup style={{display: "inline"}}>
@@ -40,5 +42,10 @@ var AppHeader = React.createClass({
 			    </FormGroup>
 			</div>
 		);
+	},
+	_newTextDocument: function(e) {
+		if(1) {
+
+		}
 	}
 });
