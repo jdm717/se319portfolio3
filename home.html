@@ -53,6 +53,16 @@
         margin-top: 0;
       }
 
+      #file-upload {
+        position: fixed;
+        top: 10px;
+        left: 37%;
+      }
+
+      #download-link {
+        visibility: hidden;
+      }
+
       .row {
         margin: 0 0 0 0;
         padding: 5px 15px 5px 0;
@@ -178,7 +188,7 @@
       inEditMode = true;
       // PHP call to fetch document content
       textContent = ""; // Whatever is fetched or nothing
-      
+
       update();
     }
 
@@ -225,9 +235,34 @@
 
           $('#success-share-modal').show();
         }
+      }
+    }
+
+    function uploadTextFile() {
+      var filething = document.getElementById("file-upload");
+
+      var file = filething.files[0];
+
+      if(file.type = "text/plain") {
+        var reader = new FileReader();
+
+        reader.readAsText(file);
+
+        reader.onload = function() {
+          alert(reader.result);
+        }
+      }
+      else {
 
       }
+    }
 
+    function downloadTextFile() {
+      var link = document.getElementById("download-link");
+
+      link.download = "test.txt";
+      link.href = "data:text/plain," + encodeURIComponent(textContent);
+      link.click();
     }
 
     </script>
@@ -248,6 +283,8 @@
     <div class="container" id="content">
 
     </div>
+
+    <a id="download-link" download="file.txt"></a>
 
     <div id="newfolder-modal" class="modal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">

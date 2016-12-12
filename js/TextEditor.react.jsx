@@ -16,6 +16,7 @@ class TextEditor extends React.Component {
 		this.onChange = (editorState) => {
 			textContent = editorState.getCurrentContent().getPlainText();
 			this.setState({editorState});
+			update();
 		}
 	}
 
