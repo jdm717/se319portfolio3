@@ -1,8 +1,8 @@
 <?php
 $folderId = htmlspecialchars($_GET['folderId']);
-$folderName = htmlspecialchars($_GET['folderName']);
+$fileName = htmlspecialchars($_GET['fileName']);
 $content = htmlspecialchars($_GET['content']);
-$query = "INSERT INTO files (folderId, folderName, content) VALUES ($folderId,$folderName,'$content')";
+$query = "INSERT INTO files (folderId, fileName, content) VALUES ($folderId,$fileName,'$content')";
 $fileInfo = mysqli_query($conn, $query);
 
 
