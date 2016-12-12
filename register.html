@@ -36,6 +36,28 @@
 					$('#confirm').val("");
 					return;
 				}
+				$.ajax({
+				url: '/se319portfolio3/register.php',
+				type: 'GET',		
+				dataType: 'json',
+				contentType: 'application/json',
+				data: {
+					username: username,
+					pw: password
+				},
+				success: function(data) {
+					if(data == 1) {
+						alert("worked");
+					}
+					else {
+						alert("Invalid username or password. Please try again.");
+					}
+				},
+				error: function(error) {
+					console.log(error);
+					alert("Failed");
+				}
+			});
 			}
 		</script>
 	</head>
