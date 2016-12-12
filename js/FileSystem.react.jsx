@@ -7,13 +7,16 @@ var Glyphicon = ReactBootstrap.Glyphicon;
 var Row = ReactBootstrap.Row;
 
 function setup_filesystem(items) {
-	debugger;
 	ReactDOM.render(<FileSystem data={items}/>, document.getElementById("content"));
 }
 
 var FileSystem = React.createClass({
 	propTypes: {
 		data: React.PropTypes.array.isRequired
+	},
+	shouldComponentUpdate: function() {
+		if(inEditMode) return false;
+		else return true;
 	},
 	render: function() {
 		var items = [];
@@ -28,7 +31,7 @@ var FileSystem = React.createClass({
 		}
 
 		return (
-			<div style={{margin: "20.5px 0 0 0 "}}>
+			<div>
 				{items}
 			</div>
 		);
@@ -60,8 +63,8 @@ var FileNode = React.createClass({
 
 		return (
 			<Row
-				onMouseEnter={this._handleItemHover}
-				onMouseLeave={this._handleItemHover}
+				onMouseEnter={this._handleItemHoverEnter}
+				onMouseLeave={this._handleItemHoverExit}
 				onClick={this._handleItemClick}
 				className={className}
 			>
@@ -70,12 +73,18 @@ var FileNode = React.createClass({
 			</Row>
 		);
 	},
-	_handleItemHover: function(e) {
+	_handleItemHoverEnter: function(e) {
 		this.setState({
-			hovered: !this.state.hovered
+			hovered: true
+		});
+	},
+	_handleItemHoverExit: function(e) {
+		this.setState({
+			hovered: false
 		});
 	},
 	_handleItemClick: function(e) {
+		lastSelected = selected;
 		selected = this.props.item;
 
 		this.forceUpdate();
