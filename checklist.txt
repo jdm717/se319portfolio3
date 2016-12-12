@@ -1,0 +1,38 @@
+Checklist
+Jeff Murray
+Val Chapman
+
+
+1. This project is deployed to the cs319.cs.iastate.edu server, and is accessible by going to the address cs319.cs.iastate.edu/team5/login.html
+
+2. With what is submitted on Blackboard, the way the project is run is by using the command "php -S localhost:8000 -t ." from command line while in the portfolio directory.
+
+3. Because the server we use is an ISU server, this web application must be accessed either through ISU's internet, or through a VPN to ISU's internet. Without doing this, the database will be unreachable, and the web application will not function.
+
+4. The service has a number of different functions involved, most of which are indicated by Glyphicons. Because this can be a bit confusing, we included a Help button to explain the purpose of all of these buttons. This can be accessed by clicking the "?" button on the home page.
+
+5. A brief overview of all the functionality is also listed below.
+	a. Back button:
+		- Simple button to return from a sub-folder.
+	b. Help button:
+		- Button that brings up a modal that explains the functionality of all the buttons with Glyphicons shown.
+	c. Download button:
+		- Downloads the text file being currently edited. Does not work with selection.
+	d. Upload button:
+		- Uploads a file (must be a text file to work) to the server. This will upload to the current folder if navigated into a folder, or will upload to the selected folder if in the main folder.
+	e. New Folder button:
+		- Creates a new folder within the user's main folder. It is not possible to add folders to sub-folders.
+	f. Rename button:
+		- Allows renaming of both folders and files. Requires the item to be selected.
+	g. Text Editor button:
+		- Brings up a text editor to either create a new file or edit an existing file. If used from the main folder, a sub-folder must be selected first.
+	h. Share button:
+		- Shares a selected folder with a specific user as placed in the input box. Files are not possible to share on their own.
+
+6. The file in the js folder called "TextEditor.react.jsx" shows an implementation of a wrapper class that was used to utilize Draft.js. This was fairly challenging to do appropriately, as it uses a different style to creating classes in React than we were used to.
+
+7. The file "home.html" has an enormous amount of AJAX calls that are utilized to keep the UI in sync with the database. Managing all these functions and the updating of data was fairly difficult.
+
+8. The file "FileSystem.react.jsx" implements the nodes that contain information about the folders/files. This also included handling of selection and hovering. While it appears fairly simple, keeping track of these things and ensuring that they are properly set and reset was a bit of a challenge.
+
+9. Lines 451-477 of home.html show our implementation of Upload and Download. These were a bit tricky to utilize properly with the database, as both were new functionalities.

@@ -27,16 +27,23 @@ var AppHeader = React.createClass({
 		}
 
 		var uploadStyle = {
-			display: "inline"
+			display: "inline",
+			visibility: "hidden"
 		}
 
 		return (
 			<div style={{margin: "20.5px 0 0 0 "}}>
 				<ButtonGroup style={toolbarStyle}>
-					<Button onClick={this._back}><Glyphicon glyph="arrow-left"/></Button>
+					{inSubFolder ?
+						<Button onClick={this._back}><Glyphicon glyph="arrow-left"/></Button>
+						:
+						<Button onClick={this._back} disabled><Glyphicon glyph="arrow-left"/></Button>
+					}
 					<Button onClick={this._help}><Glyphicon glyph="question-sign"/></Button>
 					<Button onClick={this._fileDownload}><Glyphicon glyph="download"/></Button>
+					<Button onClick={this._fileUpload}><Glyphicon glyph="upload"/></Button>
 					<Button onClick={this._newFolder}><Glyphicon glyph="plus"/></Button>
+					<Button onClick={this._fileRename}><Glyphicon glyph="pencil"/></Button>
 					<Button onClick={this._newTextDocument}><Glyphicon glyph="text-color"/></Button>
 				</ButtonGroup>
 				<input id="file-upload" onChange={this._fileUploaded} type="file" placeholder="Upload" style={uploadStyle}></input>
@@ -65,8 +72,15 @@ var AppHeader = React.createClass({
 	_shareFolder: function(e) {
 		shareFolder();
 	},
+	_fileUpload: function(e) {
+		$('#file-upload').click();
+	},	
 	_fileUploaded: function(e) {
 		uploadTextFile();
+	},
+	_fileRename: function(e) {
+		if(!selected.name) $('#no-item-modal').show();
+		else $('#rename-file-modal').show();
 	},
 	_fileDownload: function(e) {
 		downloadTextFile();

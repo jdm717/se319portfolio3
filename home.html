@@ -32,6 +32,7 @@
       body {
         overflow: hidden;
         background: #d9d9d9;
+        padding-top: 26px;
       }
 
       ::-webkit-scrollbar { 
@@ -56,7 +57,7 @@
 
       #file-upload {
         position: fixed;
-        top: 10px;
+        top: 60px;
         left: 37%;
       }
 
@@ -150,6 +151,14 @@
     window.onload = function() {
       var username = sessionStorage.username;
       var password = sessionStorage.password;
+
+      if(!username || !password) {
+        window.location = "/login.html";
+        return;
+      }
+      else {
+        document.getElementById("navbar-username").innerHTML = "Signed in as " + username;
+      }
 
       $.ajax({
         url: '/getfolders.php',
@@ -356,6 +365,8 @@
       $('#help-modal').hide();
       $('#delete-folder-modal').hide();
       $('#delete-file-modal').hide();
+      $('#rename-file-modal').hide();
+      $('#no-item-modal').hide();
     }
 
     function shareFolder() {
@@ -494,6 +505,52 @@
       });
     }
 
+    function renameFile() {
+      var name = document.getElementById("filename").value;
+
+      if(selected.type == "file") {
+        $.ajax({
+          url: '/updatefilename.php',
+          type: 'GET', 
+          dataType: 'json',
+          contentType: 'application/json',
+          data: {
+            fileId: selected.id,
+            fileName: name
+          },
+          success: function(data) {
+            editFileId = null;
+            navigateToFolder(null, {id: subFolderId});
+          },
+          error: function(error) {
+            console.log(error);
+            alert("Failed");
+          }
+        });
+      }
+      else {
+        $.ajax({
+          url: '/updatefoldername.php',
+          type: 'GET', 
+          dataType: 'json',
+          contentType: 'application/json',
+          data: {
+            folderId: selected.id,
+            folderName: name
+          },
+          success: function(data) {
+            getFolders();
+          },
+          error: function(error) {
+            console.log(error);
+            alert("Failed");
+          }
+        });
+      }
+
+      exitModals();
+    }
+
     </script>
   </head>
   <body>
@@ -505,6 +562,17 @@
         setup_app();
       }
     </script>
+
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header" style="float: right; margin: 12.5px 15px 0 0">
+          <a href="/login.html" style="color: #0099ff">Sign Out</a>
+        </div>
+        <div class="navbar-header">
+          <p id="navbar-username" class="navbar-text"></p>
+        </div>
+      </div>
+    </nav>
 
     <div class="container" id="header">
       
@@ -535,6 +603,26 @@
       </div><!-- /.modal-dialog -->
     </div><!-- /.modal -->
 
+    <div id="rename-file-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #f2f2f2">
+            <h4 class="modal-title">Rename</h4>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+          <label for="filename">New Name:</label>
+          <input type="text" class="form-control" id="filename">
+        </div>
+          </div>
+          <div class="modal-footer" style="background-color: #f2f2f2">
+            <button type="button" class="btn btn-default" onclick="exitModals()" style="float: left">Cancel</button>
+            <button type="button" class="btn btn-default" onclick="renameFile()">Rename</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
     <div id="no-folder-modal" class="modal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -543,6 +631,22 @@
           </div>
           <div class="modal-body">
           Please select a folder before performing this action.
+          </div>
+          <div class="modal-footer" style="background-color: #f2f2f2">
+            <button type="button" class="btn btn-default" onclick="exitModals()">Ok</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div id="no-item-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #f2f2f2">
+            <h4 class="modal-title">No item selected</h4>
+          </div>
+          <div class="modal-body">
+          Please select a item before performing this action.
           </div>
           <div class="modal-footer" style="background-color: #f2f2f2">
             <button type="button" class="btn btn-default" onclick="exitModals()">Ok</button>
@@ -597,7 +701,7 @@
             <br>
             <span class="glyphicon glyphicon-arrow-left"/>
             <br>
-            <span class="help-text">Back button. (When used in the main folder, logs out. When used in a sub-folder, returns to the main folder.)</span>
+            <span class="help-text">Back button. (When used in a sub-folder, returns to the main folder. Disabled otherwise.)</span>
             <br>
             <br>
             <span class="glyphicon glyphicon-download"/>
@@ -605,9 +709,19 @@
             <span class="help-text">Download the current text file. (This only works while editing or creating a text file. Downloaded as "download.txt".)</span>
             <br>
             <br>
+            <span class="glyphicon glyphicon-upload"/>
+            <br>
+            <span class="help-text">Upload a file. (Must have a folder to upload to selected or be navigated into a sub-folder. Automatically chooses the name.)</span> 
+            <br>
+            <br>
             <span class="glyphicon glyphicon-plus"/>
             <br>
             <span class="help-text">Add a folder. (This doesn't work if currently navigated into a folder.)</span>
+            <br>
+            <br>
+            <span class="glyphicon glyphicon-pencil"/>
+            <br>
+            <span class="help-text">Rename a file or folder. (Allows you to change the name of a file or folder.)</span> 
             <br>
             <br>
             <span class="glyphicon glyphicon-text-color"/>
@@ -620,9 +734,9 @@
             <span class="help-text">Delete. (Removes a folder or file. This action also removes any shared folder for others as well.)</span>
             <br>
             <br>
-            <span class="help-text">"Choose File" Button</span>
+            <span class="glyphicon glyphicon-share"/>
             <br>
-            <span class="help-text">Upload a file. (Must have a folder to upload to selected or be navigated into a sub-folder. Automatically chooses the name.)</span> 
+            <span class="help-text">Share a folder. (Shares a selected folder with a specified user. This only works for folders, and the user must be valid.)</span> 
           </div>
           <div class="modal-footer" style="background-color: #f2f2f2">
             <button type="button" class="btn btn-success" onclick="exitModals()">Ok</button>
