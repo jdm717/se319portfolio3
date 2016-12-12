@@ -44,4 +44,4 @@ var AppMain = React.createClass({
 			</div>
 		);
 	}
-})
+});

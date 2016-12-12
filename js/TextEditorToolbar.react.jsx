@@ -7,12 +7,15 @@ var TextEditorToolbar = React.createClass({
 	},
 	render: function() {
 		var cancelStyle = {
-			position: "relative"
+			position: "fixed",
+			left: "7.75%",
+			bottom: "7.5%"
 		}
 
 		var saveStyle = {
-			position: "relative",
-			float: "right"
+			position: "fixed",
+			right: "7.75%",
+			bottom: "7.5%"
 		}	
 
 		return (

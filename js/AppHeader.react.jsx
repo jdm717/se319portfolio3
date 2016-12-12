@@ -27,18 +27,17 @@ var AppHeader = React.createClass({
 		}
 
 		var uploadStyle = {
-			display: "inline",
-			padding: "0 0 0 60px"
+			display: "inline"
 		}
 
 		return (
 			<div style={{margin: "20.5px 0 0 0 "}}>
 				<ButtonGroup style={toolbarStyle}>
-					<Button><Glyphicon glyph="download"/></Button>
+					<Button onClick={this._fileDownload}><Glyphicon glyph="download"/></Button>
 					<Button onClick={this._newFolder}><Glyphicon glyph="plus"/></Button>
 					<Button onClick={this._newTextDocument}><Glyphicon glyph="text-color"/></Button>
 				</ButtonGroup>
-				<input type="file" placeholder="Upload" style={uploadStyle}></input>
+				<input id="file-upload" onChange={this._fileUploaded} type="file" placeholder="Upload" style={uploadStyle}></input>
 				<FormGroup style={{display: "inline", float: "right"}}>
 			      <InputGroup style={{display: "inline"}}>
 			        <FormControl id="share-text" type="text" placeholder="Share..." style={inputStyle}/>
@@ -57,5 +56,11 @@ var AppHeader = React.createClass({
 	},
 	_shareFolder: function(e) {
 		shareFolder();
+	},
+	_fileUploaded: function(e) {
+		uploadTextFile();
+	},
+	_fileDownload: function(e) {
+		downloadTextFile();
 	}
 });
