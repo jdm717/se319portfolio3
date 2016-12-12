@@ -24,9 +24,9 @@ $studentId = mysqli_fetch_row($qresult);
 $query = "SELECT folders.folderId, folders.folderName FROM folders JOIN access ON access.folderId=folders.folderId WHERE access.studentId = $studentId[0]"
 
 $qresult = mysqli_query($conn, $query);
+$result = array([]);
 while($folderInfo = mysqli_fetch_row($qresult)){
-		$result = array([]);
-		array_push($result,array('folderId' => $folderInfo[0], 'folderName' => '$folderName'));
+		array_push($result,array('folderId' => $folderInfo[0], 'folderName' => '$folderName[1]'));
 
 }
 
