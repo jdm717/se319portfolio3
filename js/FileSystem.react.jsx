@@ -53,12 +53,26 @@ var FileNode = React.createClass({
 	},
 	render: function() {
 		var className = "";
+		var glyph = "";
+		var hoverButtons;
 
 		if(this.state.hovered) {
 			className = "hovered";
+
+			hoverButtons =
+				<ButtonGroup style={{float: "right"}}>
+					<Button bsSize="xsmall" onClick={this._handleDelete}><Glyphicon glyph="remove-sign"/></Button>
+				</ButtonGroup>
 		}
 		if(this.props.item == selected) {
 			className += " active";
+		}
+
+		if(this.props.item.type == "folder") {
+			glyph = "folder-close";
+		}
+		else {
+			glyph = "file";
 		}
 
 		return (
@@ -68,8 +82,13 @@ var FileNode = React.createClass({
 				onClick={this._handleItemClick}
 				className={className}
 			>
-				<Glyphicon glyph="folder-close"/>
-				<a href="#">{this.props.item.name}</a>
+				<Glyphicon glyph={glyph}/>
+				{this.props.item.type == "folder" ?
+					<a href="#" onClick={this._handleNavigate}>{this.props.item.name}</a>
+					:
+					<span className="fileName">{this.props.item.name}</span>
+				}
+				{hoverButtons}
 			</Row>
 		);
 	},
@@ -90,6 +109,19 @@ var FileNode = React.createClass({
 		this.forceUpdate();
 
 		this.props.onSelectedChange(e);
+	},
+	_handleNavigate: function(e) {
+		navigateToFolder(e, this.props.item);
+	},
+	_handleDelete: function(e) {
+		if(this.props.item.type == "folder") {
+			deleteItem = this.props.item;
+			$('#delete-folder-modal').show();
+		}
+		else {
+			deleteItem = this.props.item;
+			$('#delete-file-modal').show();
+		}
 	}
 });
 

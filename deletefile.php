@@ -1,6 +1,6 @@
 <?php
-$user = htmlspecialchars($_GET['username']);
-$pw = htmlspecialchars($_GET['pw']);
+$fileId = htmlspecialchars($_GET['fileId']);
+$folderId = htmlspecialchars($_GET['folderId']);
 
 $server = "mysql.cs.iastate.edu";
 $databasename = "db319t05";
@@ -16,15 +16,11 @@ if($errno) {
    die("Connection failed:" . $errno);
 }
 
-$query = "SELECT * FROM students WHERE sName = '$user' and sPassword = '$pw'";
-
-
-$result = mysqli_query($conn, $query);
-$row = mysqli_fetch_row($result);
+$query = "DELETE FROM files WHERE folderId=$folderId AND fileId=$fileId";
+$qresult = mysqli_query($conn, $query);
 
 mysqli_close($conn);
 
-if($row[0] != NULL) echo 1;
-else echo 0;
+echo($qresult);
 
 ?>

@@ -14,9 +14,18 @@
 
 		<style type="text/css">
 			html , body {
-				background: #cccc00; 
+				background: #0a0a0a; 
 				margin: 0; 
 				padding: 0;
+			}
+			.modal {
+				padding-top: 50px;
+			}
+			.modal-footer {
+				background-color: #f2f2f2 !important;
+			}
+			.modal-header {
+				background-color: #f2f2f2 !important;
 			}
 		</style>
 		<script>
@@ -37,7 +46,7 @@
 					return;
 				}
 				$.ajax({
-				url: '/se319portfolio3/register.php',
+				url: '/register.php',
 				type: 'GET',		
 				dataType: 'json',
 				contentType: 'application/json',
@@ -83,7 +92,7 @@
 				</div>
 		      </div>
 		      <div class="modal-footer" style="background-color: #f2f2f2">
-		        <button type="button" class="btn btn-danger" onclick="create()">Create</button>
+		        <button type="button" class="btn btn-primary" onclick="create()">Create</button>
 		      </div>
 		    </div><!-- /.modal-content -->
 		  </div><!-- /.modal-dialog -->

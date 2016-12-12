@@ -13,7 +13,7 @@
 
 		<style type="text/css">
 			html , body {
-				background: #cccc00; 
+				background: #0a0a0a; 
 				margin: 0; 
 				padding: 0;
 			}
@@ -21,10 +21,10 @@
 				padding-top: 50px;
 			}
 			.modal-footer {
-				background-color: #ff3333 !important;
+				background-color: #f2f2f2 !important;
 			}
 			.modal-header {
-				background-color: #ff3333 !important;
+				background-color: #f2f2f2 !important;
 			}
 		</style>
 
@@ -37,8 +37,9 @@
 		function login() {
 			var username = $('#username').val();
 			var password = $('#password').val();
+
 			$.ajax({
-				url: '/se319portfolio3/checklogin.php',
+				url: '/checklogin.php',
 				type: 'GET',		
 				dataType: 'json',
 				contentType: 'application/json',
@@ -49,8 +50,10 @@
 				success: function(data) {
 					var parsedResponse = JSON.parse(data);
 					if(data == 1) {
-						//window.location = "/library.html";
-						alert("worked");
+						sessionStorage.setItem('username', username);
+						sessionStorage.setItem('password', password);
+
+						window.location = "/home.html";
 					}
 					else {
 						alert("Invalid username or password. Please try again.");
@@ -89,8 +92,8 @@
 				</div>
 		      </div>
 		      <div class="modal-footer" style="background-color: #f2f2f2">
-		      	<button type="button" class="btn btn-default" onclick="register()" style="float: left">Register</button>
-		        <button type="button" class="btn btn-default" onclick="login()">Login</button>
+		      	<button type="button" class="btn btn-primary" onclick="register()" style="float: left">Register</button>
+		        <button type="button" class="btn btn-primary" onclick="login()">Login</button>
 		      </div>
 		    </div><!-- /.modal-content -->
 		  </div><!-- /.modal-dialog -->

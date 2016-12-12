@@ -33,6 +33,8 @@ var AppHeader = React.createClass({
 		return (
 			<div style={{margin: "20.5px 0 0 0 "}}>
 				<ButtonGroup style={toolbarStyle}>
+					<Button onClick={this._back}><Glyphicon glyph="arrow-left"/></Button>
+					<Button onClick={this._help}><Glyphicon glyph="question-sign"/></Button>
 					<Button onClick={this._fileDownload}><Glyphicon glyph="download"/></Button>
 					<Button onClick={this._newFolder}><Glyphicon glyph="plus"/></Button>
 					<Button onClick={this._newTextDocument}><Glyphicon glyph="text-color"/></Button>
@@ -47,8 +49,14 @@ var AppHeader = React.createClass({
 			</div>
 		);
 	},
+	_back: function(e) {
+		exitSubFolder();
+	},
+	_help: function(e) {
+		$('#help-modal').show();
+	},
 	_newTextDocument: function(e) {
-		if(!selected.name) $('#no-folder-modal').show();
+		if(!selected.name && !inSubFolder) $('#no-folder-modal').show();
 		else enterEditMode();
 	},
 	_newFolder: function(e) {

@@ -1,7 +1,7 @@
 <?php
 $user = htmlspecialchars($_GET['username']);
 $folderName = htmlspecialchars($_GET['folderName']);
-$pw = htmlspecialchars($_GET['pw']);
+$folderId = htmlspecialchars($_GET['folderId']);
 
 $server = "mysql.cs.iastate.edu";
 $databasename = "db319t05";
@@ -17,22 +17,18 @@ if($errno) {
    die("Connection failed:" . $errno);
 }
 
-$query = "SELECT studentId FROM students where sName ='$user' and sPassword ='$pw'";
+$query = "SELECT studentId FROM students where sName ='$user'";
 $qresult = mysqli_query($conn, $query);
 $studentId = mysqli_fetch_row($qresult);
 
-$query = "INSERT INTO folders (folderName, studentId) VALUES ('$folderName', $studentId[0])";
+$query = "DELETE FROM folders WHERE folderName=$folderName";
 $qresult = mysqli_query($conn, $query);
 
-$query = "SELECT folderId FROM folders where folderName ='$folderName' and studentId =$studentId[0]";
+$query = "DELETE FROM access WHERE folderId=$folderId";
 $qresult = mysqli_query($conn, $query);
-$folderId = mysqli_fetch_row($qresult);
-
-$query = "INSERT INTO access (folderId, studentId) VALUES ($folderId[0],$studentId[0])";
-$intresult = mysqli_query($conn, $query);
 
 mysqli_close($conn);
 
-echo($intresult);
+echo($qresult);
 
 ?>

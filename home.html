@@ -31,6 +31,7 @@
     <style>
       body {
         overflow: hidden;
+        background: #d9d9d9;
       }
 
       ::-webkit-scrollbar { 
@@ -74,7 +75,18 @@
         color: #0000e6;
       }
 
+      .glyphicon-file {
+        font-size: 24px;
+        padding: 0 10px 0 5px;
+        color: #0000e6;
+      }
+
       a {
+        vertical-align: super;
+        color: #000000;
+      }
+
+      .fileName {
         vertical-align: super;
         color: #000000;
       }
@@ -100,6 +112,14 @@
       .public-DraftEditorPlaceholder-root {
         padding-left: 5px;
       }
+
+      .help-text {
+        font-family: arial;
+      }
+
+      .btn-xs {
+        margin-top: 3px;
+      }
     </style>
 
     <script src="./js/AppMain.react.jsx" type="text/jsx"></script>
@@ -109,56 +129,7 @@
     <script src="./js/TextEditorToolbar.react.jsx" type="text/jsx"></script>
 
     <script>
-    var items = [
-      {
-        name: "Test1"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      },
-      {
-        name: "Test2"
-      }
-    ];
+    var items = [];
 
     var selected = {};
 
@@ -168,10 +139,73 @@
 
     var textContent = "";
 
+    var inSubFolder = false;
+
+    var subFolderId = null;
+
+    var editFileId = null;
+
+    var deleteItem = null;
+
     window.onload = function() {
       var username = sessionStorage.username;
+      var password = sessionStorage.password;
 
-      // PHP call to retreive user's home folder
+      $.ajax({
+        url: '/getfolders.php',
+        type: 'GET', 
+        dataType: 'json',
+        contentType: 'application/json',
+        data: {
+          username: username,
+          pw: password
+        },
+        success: function(data) {
+          if(data.length > 0) {
+            items = data;
+            update();
+          }
+          else {
+            alert("Invalid username or password. Please try again.");
+          }
+        },
+        error: function(error) {
+          console.log(error);
+          alert("Failed");
+        }
+      });
+    }
+
+
+    function getFolders() {
+      var username = sessionStorage.username;
+      var password = sessionStorage.password;
+
+      if(inSubFolder) return;
+
+      $.ajax({
+        url: '/getfolders.php',
+        type: 'GET', 
+        dataType: 'json',
+        contentType: 'application/json',
+        data: {
+          username: username,
+          pw: password
+        },
+        success: function(data) {
+          if(data.length > 0) {
+            items = data;
+            update();
+          }
+          else {
+            alert("Invalid username or password. Please try again.");
+          }
+        },
+        error: function(error) {
+          console.log(error);
+          alert("Failed");
+        }
+      });
     }
 
     document.onclick = function(e) {
@@ -186,10 +220,31 @@
 
     function enterEditMode() {
       inEditMode = true;
-      // PHP call to fetch document content
-      textContent = ""; // Whatever is fetched or nothing
+      
+      if(inSubFolder && selected.name) {
+        $.ajax({
+          url: '/getfilecontent.php',
+          type: 'GET', 
+          data: {
+            fileId: selected.id
+          },
+          success: function(data) {
+            textContent = data;
+            editFileId = selected.id;
 
-      update();
+            update();
+          },
+          error: function(error) {
+            console.log(error);
+            alert("Failed");
+          }
+        });
+      }
+      else {
+        textContent = "";
+
+        update();
+      }
     }
 
     function exitEditMode() {
@@ -200,17 +255,94 @@
       update();
     }
 
+    function exitSubFolder() {
+      if(!subFolderId) window.location = "/login.html";
+      lastSelected = {};
+      selected = {};
+      inEditMode = false;
+      textContent = "";
+      inSubFolder = false;
+      subFolderId = null;
+      getFolders();
+      setup_appheader();
+    }
+
     function saveDocument() {
-      // PHP call to update the document
+      var sfId = subFolderId;
+      if(!subFolderId && selected.name) sfId = selected.id;
+
+      if(!editFileId) {
+        $.ajax({
+          url: '/addfile.php',
+          type: 'GET', 
+          dataType: 'json',
+          contentType: 'application/json',
+          data: {
+            folderId: sfId,
+            fileName: textContent.substring(0, 5),
+            content: textContent
+          },
+          success: function(data) {
+            if(inSubFolder) navigateToFolder(null, {id: subFolderId});
+            else getFolders();
+          },
+          error: function(error) {
+            console.log(error);
+            alert("Failed here");
+          }
+        });
+      }
+      else {
+        $.ajax({
+          url: '/updatefile.php',
+          type: 'GET', 
+          dataType: 'json',
+          contentType: 'application/json',
+          data: {
+            fileId: editFileId,
+            content: textContent
+          },
+          success: function(data) {
+            editFileId = null;
+            navigateToFolder(null, {id: subFolderId});
+          },
+          error: function(error) {
+            console.log(error);
+            alert("Failed");
+          }
+        });
+      }
 
       exitEditMode();
     }
 
     function addFolder() {
-      // PHP call to create folder
-
+      var username = sessionStorage.username;
+      var password = sessionStorage.password;
       var name = document.getElementById("foldername").value;
-      items.splice(0, 0, {name: name});
+
+      $.ajax({
+        url: '/createFolder.php',
+        type: 'GET', 
+        dataType: 'json',
+        contentType: 'application/json',
+        data: {
+          username: username,
+          pw: password,
+          folderName: name
+        },
+        success: function(data) {
+          if(data == 1) {
+            setTimeout(function() { getFolders(); }, 50);
+            update();
+          }
+        },
+        error: function(error) {
+          console.log(error);
+          alert("Failed");
+        }
+      });
+
 
       $('#newfolder-modal').hide();
       update();
@@ -221,21 +353,88 @@
       $('#no-folder-modal').hide();
       $('#invalid-share-modal').hide();
       $('#success-share-modal').hide();
+      $('#help-modal').hide();
+      $('#delete-folder-modal').hide();
+      $('#delete-file-modal').hide();
     }
 
     function shareFolder() {
-      if(!selected.name /*|| !(selected.type == "folder")*/) $('#no-folder-modal').show();
+      if(!selected.name || !(selected.type == "folder")) $('#no-folder-modal').show();
       else {
         var name = document.getElementById("share-text").value;
 
         if(name == "") $('#invalid-share-modal').show();
         else {
-          // PHP call to check if user exists
-          // PHP call to share folder with user
-
-          $('#success-share-modal').show();
+          $.ajax({
+            url: '/shareFolder.php',
+            type: 'GET', 
+            dataType: 'json',
+            contentType: 'application/json',
+            data: {
+              username: name,
+              folderId: selected.id
+            },
+            success: function(data) {
+              $('#success-share-modal').show();
+            },
+            error: function(error) {
+              console.log(error);
+              alert("Failed");
+            }
+          });
         }
       }
+    }
+
+    function deleteFolder(item) {
+      var username = sessionStorage.username;
+      if(!item) item = deleteItem;
+
+      $.ajax({
+        url: '/deletefolder.php',
+        type: 'GET', 
+        dataType: 'json',
+        contentType: 'application/json',
+        data: {
+          username: username,
+          folderName: item.name,
+          folderId: item.id
+        },
+        success: function(data) {
+          getFolders();
+        },
+        error: function(error) {
+          console.log(error);
+          alert("Failed");
+        }
+      }); 
+
+      exitModals();
+    }
+
+    function deleteFile(item) {
+      var username = sessionStorage.username;
+      if(!item) item = deleteItem;
+
+      $.ajax({
+        url: '/deletefile.php',
+        type: 'GET', 
+        dataType: 'json',
+        contentType: 'application/json',
+        data: {
+          folderId: subFolderId,
+          fileId: item.id
+        },
+        success: function(data) {
+          navigateToFolder(null, {id: subFolderId});
+        },
+        error: function(error) {
+          console.log(error);
+          alert("Failed");
+        }
+      }); 
+
+      exitModals();
     }
 
     function uploadTextFile() {
@@ -249,20 +448,50 @@
         reader.readAsText(file);
 
         reader.onload = function() {
-          alert(reader.result);
+          if((selected.name && selected.type == "folder") || inSubFolder) {
+            textContent = reader.result;
+            saveDocument();
+          }
         }
-      }
-      else {
-
       }
     }
 
     function downloadTextFile() {
       var link = document.getElementById("download-link");
+      if(!selected.name && !editFileId) return;
 
-      link.download = "test.txt";
+      link.download = "download.txt";
       link.href = "data:text/plain," + encodeURIComponent(textContent);
       link.click();
+    }
+
+    function navigateToFolder(e, item) {
+      var username = sessionStorage.username;
+      var password = sessionStorage.password;
+
+      $.ajax({
+        url: '/getfiles.php',
+        type: 'GET', 
+        dataType: 'json',
+        contentType: 'application/json',
+        data: {
+          folderId: item.id
+        },
+        success: function(data) {
+          if(Array.isArray(data)) {
+            inSubFolder = true;
+            items = data;
+            subFolderId = item.id;
+            selected = {};
+            setup_appheader();
+            update();
+          }
+        },
+        error: function(error) {
+          console.log(error);
+          alert("Failed");
+        }
+      });
     }
 
     </script>
@@ -349,6 +578,88 @@
           </div>
           <div class="modal-footer" style="background-color: #f2f2f2">
             <button type="button" class="btn btn-success" onclick="exitModals()">Ok</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div id="help-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #f2f2f2">
+            <h4 class="modal-title">Help</h4>
+          </div>
+          <div class="modal-body">
+            <span class="glyphicon glyphicon-question-sign"/>
+            <br>
+            <span class="help-text">Help</span>
+            <br>
+            <br>
+            <span class="glyphicon glyphicon-arrow-left"/>
+            <br>
+            <span class="help-text">Back button. (When used in the main folder, logs out. When used in a sub-folder, returns to the main folder.)</span>
+            <br>
+            <br>
+            <span class="glyphicon glyphicon-download"/>
+            <br>
+            <span class="help-text">Download the current text file. (This only works while editing or creating a text file. Downloaded as "download.txt".)</span>
+            <br>
+            <br>
+            <span class="glyphicon glyphicon-plus"/>
+            <br>
+            <span class="help-text">Add a folder. (This doesn't work if currently navigated into a folder.)</span>
+            <br>
+            <br>
+            <span class="glyphicon glyphicon-text-color"/>
+            <br>
+            <span class="help-text">Enter the text editor. (If no folder/file is selected or you are not currently navigated into a folder, this will fail.)</span>
+            <br>
+            <br>
+            <span class="glyphicon glyphicon-remove-sign"/>
+            <br>
+            <span class="help-text">Delete. (Removes a folder or file. This action also removes any shared folder for others as well.)</span>
+            <br>
+            <br>
+            <span class="help-text">"Choose File" Button</span>
+            <br>
+            <span class="help-text">Upload a file. (Must have a folder to upload to selected or be navigated into a sub-folder. Automatically chooses the name.)</span> 
+          </div>
+          <div class="modal-footer" style="background-color: #f2f2f2">
+            <button type="button" class="btn btn-success" onclick="exitModals()">Ok</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div id="delete-folder-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #f2f2f2">
+            <h4 class="modal-title">Delete Folder</h4>
+          </div>
+          <div class="modal-body">
+          Are you sure you wish to delete this folder?
+          </div>
+          <div class="modal-footer" style="background-color: #f2f2f2">
+          <button type="button" class="btn btn-default" onclick="exitModals()" style="float: left">Cancel</button>
+            <button type="button" class="btn btn-default" onclick="deleteFolder()">Yes</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div id="delete-file-modal" class="modal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header" style="background-color: #f2f2f2">
+            <h4 class="modal-title">Delete File</h4>
+          </div>
+          <div class="modal-body">
+          Are you sure you wish to delete this file?
+          </div>
+          <div class="modal-footer" style="background-color: #f2f2f2">
+          <button type="button" class="btn btn-default" onclick="exitModals()" style="float: left">Cancel</button>
+            <button type="button" class="btn btn-default" onclick="deleteFile()">Yes</button>
           </div>
         </div><!-- /.modal-content -->
       </div><!-- /.modal-dialog -->
